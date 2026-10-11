@@ -492,6 +492,7 @@ class _BodyState() extends ConsumerState<_Body> {
                       orientation: _isBoardTurned ? puzzleState.pov.opposite : puzzleState.pov,
                       shapes: shapes,
                       settings: defaultSettings,
+                      showProtectedSquares: boardPreferences.showProtectedSquares,
                     ),
                     const SizedBox(width: 16.0),
                     Expanded(
@@ -585,6 +586,7 @@ class _BodyState() extends ConsumerState<_Body> {
                       orientation: _isBoardTurned ? puzzleState.pov.opposite : puzzleState.pov,
                       shapes: shapes,
                       settings: defaultSettings,
+                      showProtectedSquares: boardPreferences.showProtectedSquares,
                     ),
                   ),
                   Expanded(

@@ -210,6 +210,19 @@ class _BoardSettingsScreenState() extends ConsumerState<BoardSettingsScreen> {
                 },
               ),
               SwitchSettingTile(
+                // TODO: translate once the feature is settled (see docs/internationalisation.md).
+                title: const Text('Highlight protected squares'),
+                subtitle: const Text(
+                  'Learning aid: shows in green every square your pieces defend. '
+                  'Applies to analysis, lessons, practice and puzzles.',
+                  maxLines: 5,
+                ),
+                value: boardPrefs.showProtectedSquares,
+                onChanged: (value) {
+                  ref.read(boardPreferencesProvider.notifier).toggleShowProtectedSquares();
+                },
+              ),
+              SwitchSettingTile(
                 title: Text(context.l10n.preferencesBoardHighlights),
                 value: boardPrefs.boardHighlights,
                 onChanged: (value) {

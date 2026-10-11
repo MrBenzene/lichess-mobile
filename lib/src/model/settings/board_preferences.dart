@@ -78,6 +78,10 @@ class BoardPreferences() extends Notifier<BoardPrefs> with PreferencesStorage<Bo
     return save(state.copyWith(showLegalMoves: !state.showLegalMoves));
   }
 
+  Future<void> toggleShowProtectedSquares() {
+    return save(state.copyWith(showProtectedSquares: !state.showProtectedSquares));
+  }
+
   Future<void> toggleBoardHighlights() {
     return save(state.copyWith(boardHighlights: !state.boardHighlights));
   }
@@ -177,6 +181,10 @@ sealed class const BoardPrefs._() with _$BoardPrefs implements Serializable {
     @JsonKey(defaultValue: ShapeColor.green, unknownEnumValue: ShapeColor.green)
     required ShapeColor shapeColor,
     @JsonKey(defaultValue: false) required bool showBorder,
+
+    /// Learning aid: highlight in green the squares defended by the pieces of the side the board is
+    /// oriented to. Only applies to analysis, learn, practice and puzzle boards.
+    @JsonKey(defaultValue: false) required bool showProtectedSquares,
     @JsonKey(defaultValue: kBoardDefaultBrightnessFilter) required double brightness,
     @JsonKey(defaultValue: kBoardDefaultHueFilter) required double hue,
   }) = _BoardPrefs;
@@ -204,6 +212,7 @@ sealed class const BoardPrefs._() with _$BoardPrefs implements Serializable {
     dragTargetKind: DragTargetKind.circle,
     shapeColor: ShapeColor.green,
     showBorder: false,
+    showProtectedSquares: false,
     brightness: kBoardDefaultBrightnessFilter,
     hue: kBoardDefaultHueFilter,
   );

@@ -271,6 +271,7 @@ abstract class AnalysisBoardState<
       controller: ctrl,
       onMove: (move, {viaDragAndDrop}) => onUserMove(move),
       shapes: externalShapes,
+      showProtectedSquares: boardPrefs.showProtectedSquares,
       settings: boardPrefs
           .toBoardSettings(analysisState.variant)
           .copyWith(

@@ -106,6 +106,7 @@ class _PracticeBoardLayoutState() extends ConsumerState<PracticeBoardLayout> {
                     boxShadow: isPadded ? boardShadows : const <BoxShadow>[],
                   ),
               shapes: widget.shapes.unlock,
+              showProtectedSquares: boardPrefs.showProtectedSquares,
               onMove: (move, {viaDragAndDrop}) {
                 if (move is NormalMove) widget.onMove?.call(move);
               },

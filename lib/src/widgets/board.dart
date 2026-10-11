@@ -28,12 +28,16 @@ class const BoardWidget({
   /// Move annotations to display on the board.
   final Map<Square, Annotation> annotations = const {},
   final Widget? boardOverlay,
+
+  /// Learning aid: when true, squares defended by the pieces of the [orientation] side
+  /// are highlighted in green. Recomputed after every position change.
+  final bool showProtectedSquares = false,
   final String? error,
   final GlobalKey? boardKey,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final board = Chessboard(
+    Chessboard buildBoard(Map<Square, HighlightDetails> squareHighlights) => Chessboard(
       key: boardKey,
       controller: controller,
       size: size,
@@ -41,8 +45,23 @@ class const BoardWidget({
       onMove: onMove,
       shapes: shapes,
       annotations: annotations,
+      squareHighlights: squareHighlights,
       settings: settings,
     );
+
+    final Widget board = showProtectedSquares
+        ? ValueListenableBuilder<GameData?>(
+            valueListenable: controller.gameNotifier,
+            builder: (context, game, _) => buildBoard(
+              game == null
+                  ? const {}
+                  : {
+                      for (final square in protectedSquares(game.fen, orientation).squares)
+                        square: kProtectedSquareHighlight,
+                    },
+            ),
+          )
+        : buildBoard(const {});
 
     final overlay = boardOverlay ?? (error != null ? _ErrorWidget(errorMessage: error!) : null);
 
@@ -80,6 +99,31 @@ class const _ErrorWidget({required final String errorMessage}) extends Stateless
       child: Text(errorMessage),
     );
   }
+}
+
+/// Highlight used for squares defended by the player's own pieces.
+const kProtectedSquareHighlight = HighlightDetails(solidColor: Color(0x6615781B));
+
+/// Returns the set of squares attacked (i.e. defended) by the pieces of [side] in the
+/// position described by [fen].
+///
+/// Sliding pieces (bishop, rook, queen) stop at the first piece in their way, so
+/// blocked lines are not counted. Pawns only defend diagonally. Squares occupied by
+/// the side's own pieces are included: that is what tells you a piece is protected.
+SquareSet protectedSquares(String fen, Side side) {
+  final Board board;
+  try {
+    board = Board.parseFen(fen.split(' ').first);
+  } catch (_) {
+    return SquareSet.empty;
+  }
+  var result = SquareSet.empty;
+  for (final (square, piece) in board.pieces) {
+    if (piece.color == side) {
+      result = result | attacks(piece, square, board.occupied);
+    }
+  }
+  return result;
 }
 
 /// Executes a pending premove on [ctrl] if it is legal in [position], calling [onMove] via

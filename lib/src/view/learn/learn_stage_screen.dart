@@ -122,6 +122,7 @@ class _BodyState() extends ConsumerState<_Body> {
                 level: state.level,
                 controller: _boardController,
                 settings: settings,
+                showProtectedSquares: boardPrefs.showProtectedSquares,
                 onMove: (move) {
                   if (move is NormalMove) controller.onUserMove(move);
                 },
@@ -172,6 +173,7 @@ class const _LearnBoard({
   required final ChessboardController controller,
   required final ChessboardSettings settings,
   required final void Function(Move move) onMove,
+  final bool showProtectedSquares = false,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -197,6 +199,7 @@ class const _LearnBoard({
             orientation: orientation,
             controller: controller,
             settings: settings,
+            showProtectedSquares: showProtectedSquares,
             onMove: (move, {viaDragAndDrop}) => onMove(move),
             shapes: {
               ...level.shapes.map(_toBoardShape),
